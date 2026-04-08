@@ -66,6 +66,7 @@ const sections: Section[] = [
       { name: 'Inercia Autista' },
       { name: 'Hiperfoco' },
       { name: 'Ruminacao' },
+      { name: 'Alexitimia' },
       { name: 'Hiperempatia' },
       { name: 'Ima de Energia' },
       { name: 'Transtornos Sensoriais' },
