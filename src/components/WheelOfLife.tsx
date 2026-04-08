@@ -823,23 +823,28 @@ export function WheelOfLife() {
                   if (value === 0) return null;
 
                   const middleAngle = sectionAngleStart + topicIndex * anglePerTopic + anglePerTopic / 2;
-                  const labelRadius = innerRadius + levelSize * Math.max(value - 0.45, 0.75);
-                  const point = polarToCartesian(middleAngle, labelRadius);
+                  const valueLabels = Array.from({ length: value }, (_, index) => {
+                    const currentLevel = index + 1;
+                    const labelRadius = innerRadius + levelSize * Math.max(currentLevel - 0.45, 0.75);
+                    const point = polarToCartesian(middleAngle, labelRadius);
 
-                  return (
-                    <text
-                      key={`value-text-${section.id}-${topic.name}`}
-                      x={point.x}
-                      y={point.y}
-                      fill={section.color}
-                      fontSize="14"
-                      fontWeight="700"
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                    >
-                      {value}
-                    </text>
-                  );
+                    return (
+                      <text
+                        key={`value-text-${section.id}-${topic.name}-${currentLevel}`}
+                        x={point.x}
+                        y={point.y}
+                        fill={section.color}
+                        fontSize="10"
+                        fontWeight="700"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                      >
+                        {currentLevel}
+                      </text>
+                    );
+                  });
+
+                  return <g key={`value-label-group-${section.id}-${topic.name}`}>{valueLabels}</g>;
                 });
               })}
             </svg>
