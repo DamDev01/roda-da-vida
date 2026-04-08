@@ -176,10 +176,11 @@ export function WheelOfLife() {
   const size = 900;
   const center = size / 2;
   const innerRadius = 60;
-  const maxRadius = 310;
+  const scoreMaxRadius = 278;
+  const topicBandOuterRadius = 310;
   const outerRingWidth = 40;
   const levels = 10;
-  const topicLabelRadius = maxRadius - 28;
+  const topicLabelRadius = (scoreMaxRadius + topicBandOuterRadius) / 2;
 
   const polarToCartesian = (angle: number, radius: number) => {
     const rad = (angle - 90) * Math.PI / 180;
@@ -220,6 +221,19 @@ export function WheelOfLife() {
       .map((word) => word[0]?.toUpperCase() ?? '')
       .join('')
       .slice(0, 3);
+  };
+
+  const lightenColor = (hex: string, amount: number) => {
+    const normalizedHex = hex.replace('#', '');
+    const safeAmount = Math.min(Math.max(amount, 0), 1);
+    const channels = normalizedHex.match(/.{1,2}/g);
+
+    if (!channels || channels.length !== 3) return hex;
+
+    const [r, g, b] = channels.map((channel) => parseInt(channel, 16));
+    const lighten = (value: number) => Math.round(value + (255 - value) * safeAmount);
+
+    return `rgb(${lighten(r)}, ${lighten(g)}, ${lighten(b)})`;
   };
 
   const getValue = (sectionIndex: number, topicIndex: number): number => {
@@ -375,7 +389,7 @@ export function WheelOfLife() {
                 {sections.map((section, index) => {
                   const startAngle = index * 90;
                   const endAngle = (index + 1) * 90;
-                  const midRadius = maxRadius + outerRingWidth / 2;
+                  const midRadius = topicBandOuterRadius + outerRingWidth / 2;
                   const start = polarToCartesian(startAngle, midRadius);
                   const end = polarToCartesian(endAngle, midRadius);
 
@@ -394,8 +408,8 @@ export function WheelOfLife() {
                   const anglePerTopic = 90 / section.topics.length;
 
                   return section.topics.map((topic, topicIndex) => {
-                    const startAngle = sectionAngleStart + topicIndex * anglePerTopic + 1.2;
-                    const endAngle = sectionAngleStart + (topicIndex + 1) * anglePerTopic - 1.2;
+                    const startAngle = sectionAngleStart + topicIndex * anglePerTopic + 1.5;
+                    const endAngle = sectionAngleStart + (topicIndex + 1) * anglePerTopic - 1.5;
                     const start = polarToCartesian(startAngle, topicLabelRadius);
                     const end = polarToCartesian(endAngle, topicLabelRadius);
 
@@ -412,7 +426,7 @@ export function WheelOfLife() {
               </defs>
 
               {Array.from({ length: levels + 1 }, (_, i) => {
-                const radius = innerRadius + ((maxRadius - innerRadius) / levels) * i;
+                const radius = innerRadius + ((scoreMaxRadius - innerRadius) / levels) * i;
                 return (
                   <circle
                     key={`circle-${i}`}
@@ -433,7 +447,7 @@ export function WheelOfLife() {
                 return section.topics.map((topic, topicIndex) => {
                   const angle = sectionAngleStart + topicIndex * anglePerTopic;
                   const innerPoint = polarToCartesian(angle, innerRadius);
-                  const outerPoint = polarToCartesian(angle, maxRadius);
+                  const outerPoint = polarToCartesian(angle, scoreMaxRadius);
 
                   return (
                     <line
@@ -456,10 +470,32 @@ export function WheelOfLife() {
                 return (
                   <path
                     key={`outer-ring-${index}`}
-                    d={createArc(startAngle, endAngle, maxRadius, maxRadius + outerRingWidth)}
+                    d={createArc(startAngle, endAngle, topicBandOuterRadius, topicBandOuterRadius + outerRingWidth)}
                     fill={section.color}
                   />
                 );
+              })}
+
+              {sections.map((section, sectionIndex) => {
+                const sectionAngleStart = sectionIndex * 90;
+                const anglePerTopic = 90 / section.topics.length;
+                const topicBandFill = lightenColor(section.color, 0.72);
+
+                return section.topics.map((topic, topicIndex) => {
+                  const startAngle = sectionAngleStart + topicIndex * anglePerTopic;
+                  const endAngle = sectionAngleStart + (topicIndex + 1) * anglePerTopic;
+
+                  return (
+                    <path
+                      key={`topic-band-${sectionIndex}-${topicIndex}`}
+                      d={createArc(startAngle, endAngle, scoreMaxRadius, topicBandOuterRadius)}
+                      fill={topicBandFill}
+                      stroke={section.color}
+                      strokeOpacity="0.18"
+                      strokeWidth="0.8"
+                    />
+                  );
+                });
               })}
 
               {sections.map((section, index) => (
@@ -479,7 +515,7 @@ export function WheelOfLife() {
                 section.topics.map((topic, topicIndex) => (
                   <text
                     key={`topic-text-${sectionIndex}-${topicIndex}`}
-                    fill="#0f172a"
+                    fill={section.color}
                     className="text-[10px]"
                     style={{ fontWeight: 700, letterSpacing: '0.08em' }}
                   >
@@ -504,7 +540,7 @@ export function WheelOfLife() {
 
                   const startAngle = sectionAngleStart + topicIndex * anglePerTopic;
                   const endAngle = sectionAngleStart + (topicIndex + 1) * anglePerTopic;
-                  const valueRadius = innerRadius + ((maxRadius - innerRadius) / levels) * value;
+                  const valueRadius = innerRadius + ((scoreMaxRadius - innerRadius) / levels) * value;
 
                   const start = polarToCartesian(startAngle, valueRadius);
                   const end = polarToCartesian(endAngle, valueRadius);
