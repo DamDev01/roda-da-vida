@@ -1,7 +1,22 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, BatteryCharging, BookOpen, Brain, Download, Layers3, RotateCcw, Sparkles, X } from 'lucide-react';
+import {
+  ArrowRight,
+  BatteryCharging,
+  BookOpen,
+  Brain,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  Download,
+  Layers3,
+  RotateCcw,
+  Sparkles,
+  X,
+} from 'lucide-react';
 import jsPDF from 'jspdf';
 
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 interface Topic {
@@ -9,9 +24,11 @@ interface Topic {
 }
 
 interface Section {
+  id: string;
   title: string;
   topics: Topic[];
   color: string;
+  cardNumber: number;
 }
 
 interface MethodologyGuide {
@@ -26,8 +43,15 @@ interface MethodologyGuide {
   reminders?: string[];
 }
 
+interface GuidingQuestion {
+  sectionId: string;
+  questionNumber: number;
+  prompt: string;
+}
+
 const sections: Section[] = [
   {
+    id: 'metodologia-5-corpos',
     title: 'METODOLOGIA DOS 5 CORPOS',
     topics: [
       { name: 'Corpo Fisico' },
@@ -37,16 +61,20 @@ const sections: Section[] = [
       { name: 'Corpo Autentico' },
     ],
     color: '#1E40AF',
+    cardNumber: 1,
   },
   {
+    id: 'banco-de-energia',
     title: 'BANCO DE ENERGIA',
     topics: [
       { name: 'Depositos' },
       { name: 'Retiradas' },
     ],
     color: '#F59E0B',
+    cardNumber: 2,
   },
   {
+    id: 'estrategias-aplicadas',
     title: 'ESTRATEGIAS APLICADAS',
     topics: [
       { name: 'Comando Mental' },
@@ -58,8 +86,10 @@ const sections: Section[] = [
       { name: 'Armadura de Cristal' },
     ],
     color: '#10B981',
+    cardNumber: 3,
   },
   {
+    id: 'tracos-neurodivergentes',
     title: 'TRACOS NEURODIVERGENTES',
     topics: [
       { name: 'Masking (Mascaramento)' },
@@ -71,8 +101,16 @@ const sections: Section[] = [
       { name: 'Ima de Energia' },
       { name: 'Transtornos Sensoriais' },
     ],
-    color: '#EC4899',
+    color: '#DC2626',
+    cardNumber: 4,
   },
+];
+
+const wheelSectionOrder = [
+  'metodologia-5-corpos',
+  'banco-de-energia',
+  'tracos-neurodivergentes',
+  'estrategias-aplicadas',
 ];
 
 const methodologyGuides: MethodologyGuide[] = [
@@ -155,10 +193,51 @@ const guideIcons = [Sparkles, BatteryCharging, Layers3, Brain];
 const evaluationNote =
   'A nossa roda da vida e uma fotografia mensal da sua energia nas areas importantes da sua vida e voce preenche uma vez por mes. Transforme isso em objetivos possiveis e revisite depois para acompanhar a sua evolucao. Ela nao existe para te provar que esta falhando, mas para te mostrar onde faz sentido colocar atencao e cuidado primeiro. Avalie cada campo numa escala de 0 a 10.';
 const insignificantWords = new Set(['de', 'da', 'do', 'das', 'dos', 'e']);
+const trackOptions = [
+  'Trilha da Energia',
+  'Trilha do Sensorial',
+  'Trilha do Trabalho',
+  'Trilha da Casa e Familia',
+  'Tilha do autocuidado',
+  'Trilha da Gestao Financeira',
+  'Trilha da Comunicacao',
+  'Trilha da Preservacao da Bioenergia.',
+];
+const guidingQuestions: GuidingQuestion[] = [
+  {
+    sectionId: 'metodologia-5-corpos',
+    questionNumber: 1,
+    prompt: 'Numa escala de 1 a 10, como voce sente a evolucao do bem estar em cada um dos 5 Corpos?',
+  },
+  {
+    sectionId: 'banco-de-energia',
+    questionNumber: 2,
+    prompt: 'Numa escala de 1 a 10, registre a sua evolucao em depositos e retiradas de energia neste mes.',
+  },
+  {
+    sectionId: 'estrategias-aplicadas',
+    questionNumber: 3,
+    prompt: 'Numa escala de 1 a 10, o quanto voce conseguiu treinar em sua rotina, cada uma das estrategias de regulacao que ja foram apresentadas?',
+  },
+  {
+    sectionId: 'tracos-neurodivergentes',
+    questionNumber: 4,
+    prompt: 'Numa escala de 1 a 10, o quanto os tracos neurodivergentes dificultam o seu dia a dia?',
+  },
+];
 
 export function WheelOfLife() {
   const [values, setValues] = useState<{ [key: string]: number }>({});
   const [selectedGuideTitle, setSelectedGuideTitle] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
+  const [isTrackSelectorOpen, setIsTrackSelectorOpen] = useState(false);
+  const [questionAnswers, setQuestionAnswers] = useState<{ [key: string]: string }>({});
+
+  const wheelSections = wheelSectionOrder
+    .map((sectionId) => sections.find((section) => section.id === sectionId))
+    .filter((section): section is Section => Boolean(section));
+  const sectionById = Object.fromEntries(sections.map((section) => [section.id, section]));
 
   useEffect(() => {
     if (!selectedGuideTitle) return;
@@ -172,6 +251,19 @@ export function WheelOfLife() {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [selectedGuideTitle]);
+
+  useEffect(() => {
+    if (!isTrackSelectorOpen) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsTrackSelectorOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isTrackSelectorOpen]);
 
   const size = 900;
   const center = size / 2;
@@ -223,6 +315,15 @@ export function WheelOfLife() {
       .slice(0, 3);
   };
 
+  const formatDateLabel = (value: string) => {
+    if (!value) return 'Nao informada';
+
+    const [year, month, day] = value.split('-');
+    if (!year || !month || !day) return value;
+
+    return `${day}/${month}/${year}`;
+  };
+
   const lightenColor = (hex: string, amount: number) => {
     const normalizedHex = hex.replace('#', '');
     const safeAmount = Math.min(Math.max(amount, 0), 1);
@@ -236,14 +337,26 @@ export function WheelOfLife() {
     return `rgb(${lighten(r)}, ${lighten(g)}, ${lighten(b)})`;
   };
 
-  const getValue = (sectionIndex: number, topicIndex: number): number => {
-    const key = `${sectionIndex}-${topicIndex}`;
+  const getValue = (sectionId: string, topicIndex: number): number => {
+    const key = `${sectionId}-${topicIndex}`;
     return values[key] || 0;
   };
 
-  const setValue = (sectionIndex: number, topicIndex: number, value: number) => {
-    const key = `${sectionIndex}-${topicIndex}`;
+  const setValue = (sectionId: string, topicIndex: number, value: number) => {
+    const key = `${sectionId}-${topicIndex}`;
     setValues((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const getQuestionAnswer = (sectionId: string) => questionAnswers[sectionId] || '';
+
+  const setQuestionAnswer = (sectionId: string, answer: string) => {
+    setQuestionAnswers((prev) => ({ ...prev, [sectionId]: answer }));
+  };
+
+  const toggleTrackSelection = (track: string) => {
+    setSelectedTracks((prev) =>
+      prev.includes(track) ? prev.filter((item) => item !== track) : [...prev, track],
+    );
   };
 
   const downloadPDF = () => {
@@ -270,16 +383,14 @@ export function WheelOfLife() {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pageWidth = 210;
-        const imgWidth = 140;
-        const imgHeight = 140;
-        const x = (pageWidth - imgWidth) / 2;
-        const y = 10;
-
-        pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
-
-        let currentY = y + imgHeight + 10;
         const leftMargin = 10;
-        const columnWidth = (pageWidth - 2 * leftMargin) / 2;
+        const contentWidth = pageWidth - 2 * leftMargin;
+        const imgWidth = 132;
+        const imgHeight = 132;
+        const x = (pageWidth - imgWidth) / 2;
+        const pageHeight = 297;
+        const bottomMargin = 12;
+        let currentY = 14;
         const barHeight = 3;
         const barWidth = 50;
 
@@ -294,55 +405,110 @@ export function WheelOfLife() {
             : { r: 0, g: 0, b: 0 };
         };
 
-        sections.forEach((section, sectionIndex) => {
-          const column = sectionIndex % 2;
-          const xPos = leftMargin + column * columnWidth;
+        const ensureSpace = (neededHeight: number) => {
+          if (currentY + neededHeight <= pageHeight - bottomMargin) return;
+          pdf.addPage();
+          currentY = 15;
+        };
 
-          if (sectionIndex === 2) {
-            pdf.addPage();
-            currentY = 15;
-          }
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(14);
+        pdf.setTextColor(15, 23, 42);
+        pdf.text('Roda da Vida Personalizada', pageWidth / 2, currentY, { align: 'center' });
+        currentY += 7;
 
-          const yPos = currentY;
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        pdf.text(`Data: ${formatDateLabel(selectedDate)}`, leftMargin, currentY);
+        currentY += 5;
+
+        const selectedTracksText = selectedTracks.length ? selectedTracks.join(' | ') : 'Nenhuma trilha selecionada';
+        const trackLines = pdf.splitTextToSize(`Trilhas selecionadas: ${selectedTracksText}`, contentWidth);
+        pdf.text(trackLines, leftMargin, currentY);
+        currentY += trackLines.length * 4 + 3;
+
+        pdf.addImage(imgData, 'PNG', x, currentY, imgWidth, imgHeight);
+        currentY += imgHeight + 8;
+
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(11);
+        pdf.setTextColor(15, 23, 42);
+        pdf.text('Resumo dos quadrantes', leftMargin, currentY);
+        currentY += 6;
+
+        sections.forEach((section) => {
+          const estimatedHeight = 14 + section.topics.length * 7;
+          ensureSpace(estimatedHeight);
+
           const rgb = hexToRgb(section.color);
           pdf.setFillColor(rgb.r, rgb.g, rgb.b);
-          pdf.rect(xPos, yPos, columnWidth - 5, 2, 'F');
+          pdf.rect(leftMargin, currentY, contentWidth, 2, 'F');
 
+          pdf.setFont('helvetica', 'bold');
           pdf.setFontSize(8);
           pdf.setTextColor(rgb.r, rgb.g, rgb.b);
-          pdf.setFont('helvetica', 'bold');
-          pdf.text(section.title, xPos + 2, yPos + 6);
+          pdf.text(`${section.cardNumber}. ${section.title}`, leftMargin + 2, currentY + 6);
 
           pdf.setFont('helvetica', 'normal');
           pdf.setTextColor(51, 65, 85);
 
           section.topics.forEach((topic, topicIndex) => {
-            const value = getValue(sectionIndex, topicIndex);
-            const topicY = yPos + 11 + topicIndex * 7;
+            const value = getValue(section.id, topicIndex);
+            const topicY = currentY + 11 + topicIndex * 7;
 
             pdf.setFontSize(7);
-            pdf.text(topic.name, xPos + 2, topicY);
+            pdf.text(topic.name, leftMargin + 2, topicY);
 
-            pdf.setFontSize(7);
             pdf.setTextColor(100, 116, 139);
-            pdf.text(`${value}`, xPos + columnWidth - 10, topicY);
+            pdf.text(`${value}`, leftMargin + contentWidth - 8, topicY);
 
             pdf.setFillColor(229, 231, 235);
-            pdf.rect(xPos + 2, topicY + 1, barWidth, barHeight, 'F');
+            pdf.rect(leftMargin + 2, topicY + 1, barWidth, barHeight, 'F');
 
             if (value > 0) {
               pdf.setFillColor(rgb.r, rgb.g, rgb.b);
               const fillWidth = (barWidth * value) / 10;
-              pdf.rect(xPos + 2, topicY + 1, fillWidth, barHeight, 'F');
+              pdf.rect(leftMargin + 2, topicY + 1, fillWidth, barHeight, 'F');
             }
 
             pdf.setTextColor(51, 65, 85);
           });
 
-          if (column === 1) {
-            const maxTopics = Math.max(sections[sectionIndex - 1]?.topics.length || 0, section.topics.length);
-            currentY += 11 + maxTopics * 7 + 5;
-          }
+          currentY += estimatedHeight + 3;
+        });
+
+        ensureSpace(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(11);
+        pdf.setTextColor(15, 23, 42);
+        pdf.text('Questoes orientadoras', leftMargin, currentY);
+        currentY += 6;
+
+        guidingQuestions.forEach((question) => {
+          const section = sectionById[question.sectionId];
+          const accent = section ? hexToRgb(section.color) : { r: 51, g: 65, b: 85 };
+          const answer = getQuestionAnswer(question.sectionId) || 'Resposta nao preenchida.';
+          const promptLines = pdf.splitTextToSize(`${question.questionNumber}. ${question.prompt}`, contentWidth - 6);
+          const answerLines = pdf.splitTextToSize(`Resposta: ${answer}`, contentWidth - 10);
+          const blockHeight = 10 + promptLines.length * 4 + answerLines.length * 4;
+
+          ensureSpace(blockHeight);
+
+          pdf.setDrawColor(accent.r, accent.g, accent.b);
+          pdf.setFillColor(248, 250, 252);
+          pdf.roundedRect(leftMargin, currentY, contentWidth, blockHeight, 2, 2, 'FD');
+
+          pdf.setFont('helvetica', 'bold');
+          pdf.setFontSize(9);
+          pdf.setTextColor(accent.r, accent.g, accent.b);
+          pdf.text(promptLines, leftMargin + 3, currentY + 5);
+
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(8);
+          pdf.setTextColor(51, 65, 85);
+          pdf.text(answerLines, leftMargin + 5, currentY + 5 + promptLines.length * 4 + 2);
+
+          currentY += blockHeight + 4;
         });
 
         pdf.save('roda-da-vida.pdf');
@@ -356,6 +522,10 @@ export function WheelOfLife() {
 
   const resetValues = () => {
     setValues({});
+    setSelectedDate('');
+    setSelectedTracks([]);
+    setQuestionAnswers({});
+    setIsTrackSelectorOpen(false);
   };
 
   return (
@@ -373,6 +543,77 @@ export function WheelOfLife() {
 
       <TabsContent value="avaliacao">
         <div className="flex flex-col items-center gap-8">
+          <div className="w-full max-w-6xl rounded-[1.7rem] border border-slate-200/80 bg-[linear-gradient(155deg,rgba(255,255,255,0.98),rgba(241,245,249,0.92))] p-5 shadow-[0_30px_70px_rgba(15,23,42,0.08)] md:p-6">
+            <div className="grid gap-5 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+              <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center gap-2 text-slate-700">
+                  <CalendarDays size={16} />
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Data da avaliacao</p>
+                </div>
+                <Input type="date" value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} />
+                <p className="mt-3 text-xs leading-5 text-slate-500">
+                  Use esse campo para registrar o mes ou o dia de referencia desta fotografia da roda.
+                </p>
+              </section>
+
+              <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Trilhas selecionadas</p>
+                    <p className="mt-1 text-sm text-slate-600">Escolha uma ou mais trilhas para acompanhar junto com a avaliacao.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100"
+                    onClick={() => setIsTrackSelectorOpen((prev) => !prev)}
+                  >
+                    Caixa de selecao
+                    <ChevronDown size={16} className={`transition-transform ${isTrackSelectorOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+
+                {isTrackSelectorOpen && (
+                  <div className="grid gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                    {trackOptions.map((track) => {
+                      const checked = selectedTracks.includes(track);
+
+                      return (
+                        <label
+                          key={track}
+                          className="flex cursor-pointer items-center justify-between rounded-lg border border-transparent bg-white px-3 py-2 text-sm text-slate-700 shadow-sm transition-colors hover:border-slate-200"
+                        >
+                          <span>{track}</span>
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 accent-slate-700"
+                            checked={checked}
+                            onChange={() => toggleTrackSelection(track)}
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {selectedTracks.length > 0 ? (
+                    selectedTracks.map((track) => (
+                      <span
+                        key={track}
+                        className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700"
+                      >
+                        <Check size={12} />
+                        {track}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-sm text-slate-500">Nenhuma trilha selecionada.</span>
+                  )}
+                </div>
+              </section>
+            </div>
+          </div>
+
           <div className="w-full max-w-6xl rounded-xl border-t-4 bg-white p-6 shadow-lg" style={{ borderColor: '#DC2626' }}>
             <div className="mb-3 flex items-center gap-2">
               <span className="rounded-full bg-red-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-red-600">
@@ -386,7 +627,7 @@ export function WheelOfLife() {
           <div id="wheel-of-life" className="overflow-x-auto rounded-2xl bg-white p-6 shadow-2xl md:p-12">
             <svg width={size} height={size}>
               <defs>
-                {sections.map((section, index) => {
+                {wheelSections.map((section, index) => {
                   const startAngle = index * 90;
                   const endAngle = (index + 1) * 90;
                   const midRadius = topicBandOuterRadius + outerRingWidth / 2;
@@ -403,7 +644,7 @@ export function WheelOfLife() {
                   );
                 })}
 
-                {sections.map((section, sectionIndex) => {
+                {wheelSections.map((section, sectionIndex) => {
                   const sectionAngleStart = sectionIndex * 90;
                   const anglePerTopic = 90 / section.topics.length;
 
@@ -440,7 +681,7 @@ export function WheelOfLife() {
                 );
               })}
 
-              {sections.map((section, sectionIndex) => {
+              {wheelSections.map((section, sectionIndex) => {
                 const sectionAngleStart = sectionIndex * 90;
                 const anglePerTopic = 90 / section.topics.length;
 
@@ -451,7 +692,7 @@ export function WheelOfLife() {
 
                   return (
                     <line
-                      key={`radial-${sectionIndex}-${topicIndex}`}
+                      key={`radial-${section.id}-${topic.name}`}
                       x1={innerPoint.x}
                       y1={innerPoint.y}
                       x2={outerPoint.x}
@@ -463,20 +704,20 @@ export function WheelOfLife() {
                 });
               })}
 
-              {sections.map((section, index) => {
+              {wheelSections.map((section, index) => {
                 const startAngle = index * 90;
                 const endAngle = (index + 1) * 90;
 
                 return (
                   <path
-                    key={`outer-ring-${index}`}
+                    key={`outer-ring-${section.id}`}
                     d={createArc(startAngle, endAngle, topicBandOuterRadius, topicBandOuterRadius + outerRingWidth)}
                     fill={section.color}
                   />
                 );
               })}
 
-              {sections.map((section, sectionIndex) => {
+              {wheelSections.map((section, sectionIndex) => {
                 const sectionAngleStart = sectionIndex * 90;
                 const anglePerTopic = 90 / section.topics.length;
                 const topicBandFill = lightenColor(section.color, 0.72);
@@ -487,7 +728,7 @@ export function WheelOfLife() {
 
                   return (
                     <path
-                      key={`topic-band-${sectionIndex}-${topicIndex}`}
+                      key={`topic-band-${section.id}-${topic.name}`}
                       d={createArc(startAngle, endAngle, scoreMaxRadius, topicBandOuterRadius)}
                       fill={topicBandFill}
                       stroke={section.color}
@@ -498,9 +739,9 @@ export function WheelOfLife() {
                 });
               })}
 
-              {sections.map((section, index) => (
+              {wheelSections.map((section, index) => (
                 <text
-                  key={`text-${index}`}
+                  key={`text-${section.id}`}
                   fill="white"
                   className="text-xs"
                   style={{ fontWeight: 700, letterSpacing: '0.05em' }}
@@ -511,10 +752,10 @@ export function WheelOfLife() {
                 </text>
               ))}
 
-              {sections.map((section, sectionIndex) => (
+              {wheelSections.map((section, sectionIndex) =>
                 section.topics.map((topic, topicIndex) => (
                   <text
-                    key={`topic-text-${sectionIndex}-${topicIndex}`}
+                    key={`topic-text-${section.id}-${topic.name}`}
                     fill={section.color}
                     className="text-[10px]"
                     style={{ fontWeight: 700, letterSpacing: '0.08em' }}
@@ -527,15 +768,15 @@ export function WheelOfLife() {
                       {getTopicInitials(topic.name)}
                     </textPath>
                   </text>
-                ))
-              ))}
+                )),
+              )}
 
-              {sections.map((section, sectionIndex) => {
+              {wheelSections.map((section, sectionIndex) => {
                 const sectionAngleStart = sectionIndex * 90;
                 const anglePerTopic = 90 / section.topics.length;
 
                 return section.topics.map((topic, topicIndex) => {
-                  const value = getValue(sectionIndex, topicIndex);
+                  const value = getValue(section.id, topicIndex);
                   if (value === 0) return null;
 
                   const startAngle = sectionAngleStart + topicIndex * anglePerTopic;
@@ -558,7 +799,7 @@ export function WheelOfLife() {
 
                   return (
                     <path
-                      key={`fill-${sectionIndex}-${topicIndex}`}
+                      key={`fill-${section.id}-${topic.name}`}
                       d={path}
                       fill={section.color}
                       fillOpacity="0.4"
@@ -568,23 +809,65 @@ export function WheelOfLife() {
                   );
                 });
               })}
+
+              {wheelSections.map((section, sectionIndex) => {
+                const sectionAngleStart = sectionIndex * 90;
+                const anglePerTopic = 90 / section.topics.length;
+                const levelSize = (scoreMaxRadius - innerRadius) / levels;
+
+                return section.topics.map((topic, topicIndex) => {
+                  const value = getValue(section.id, topicIndex);
+                  if (value === 0) return null;
+
+                  const middleAngle = sectionAngleStart + topicIndex * anglePerTopic + anglePerTopic / 2;
+                  const labelRadius = innerRadius + levelSize * Math.max(value - 0.45, 0.75);
+                  const point = polarToCartesian(middleAngle, labelRadius);
+
+                  return (
+                    <text
+                      key={`value-text-${section.id}-${topic.name}`}
+                      x={point.x}
+                      y={point.y}
+                      fill={section.color}
+                      fontSize="14"
+                      fontWeight="700"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                    >
+                      {value}
+                    </text>
+                  );
+                });
+              })}
             </svg>
           </div>
 
-          <div className="grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {sections.map((section, sectionIndex) => (
+          <div className="grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-2">
+            {sections.map((section) => (
               <div
-                key={sectionIndex}
+                key={section.id}
                 className="rounded-xl border-t-4 bg-white p-6 shadow-lg"
                 style={{ borderColor: section.color }}
               >
-                <h3 className="mb-4 text-sm uppercase tracking-wide" style={{ color: section.color }}>
-                  {section.title}
-                </h3>
+                <div className="mb-4 flex items-start justify-between gap-4">
+                  <h3 className="text-sm uppercase tracking-wide" style={{ color: section.color }}>
+                    {section.title}
+                  </h3>
+                  <span
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border text-sm font-bold"
+                    style={{
+                      color: section.color,
+                      borderColor: lightenColor(section.color, 0.38),
+                      backgroundColor: lightenColor(section.color, 0.84),
+                    }}
+                  >
+                    {section.cardNumber}
+                  </span>
+                </div>
                 <div className="space-y-3">
                   {section.topics.map((topic, topicIndex) => {
-                    const value = getValue(sectionIndex, topicIndex);
-                    const key = `${sectionIndex}-${topicIndex}`;
+                    const value = getValue(section.id, topicIndex);
+                    const key = `${section.id}-${topicIndex}`;
                     return (
                       <div key={key} className="space-y-1">
                         <div className="flex items-center justify-between">
@@ -601,7 +884,7 @@ export function WheelOfLife() {
                           min="0"
                           max="10"
                           value={value}
-                          onChange={(e) => setValue(sectionIndex, topicIndex, parseInt(e.target.value, 10))}
+                          onChange={(e) => setValue(section.id, topicIndex, parseInt(e.target.value, 10))}
                           className="h-2 w-full cursor-pointer appearance-none rounded-lg"
                           style={{
                             background: `linear-gradient(to right, ${section.color} 0%, ${section.color} ${
@@ -615,6 +898,55 @@ export function WheelOfLife() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="w-full max-w-6xl rounded-[1.9rem] border border-slate-200/80 bg-white p-5 shadow-[0_24px_80px_rgba(15,23,42,0.08)] md:p-7">
+            <div className="mb-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Questoes orientadoras</p>
+              <h3 className="mt-2 text-xl font-semibold text-slate-900">Registre uma resposta para cada quadrante.</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Essas respostas tambem sao exportadas junto com a roda quando voce salva o PDF.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {guidingQuestions.map((question) => {
+                const section = sectionById[question.sectionId];
+                if (!section) return null;
+
+                return (
+                  <section
+                    key={question.sectionId}
+                    className="rounded-xl border p-4 shadow-sm"
+                    style={{
+                      borderColor: lightenColor(section.color, 0.6),
+                      backgroundColor: lightenColor(section.color, 0.92),
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span
+                        className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                        style={{ backgroundColor: section.color }}
+                      >
+                        {question.questionNumber}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-base font-semibold leading-7 text-slate-900">{question.prompt}</p>
+                        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em]" style={{ color: section.color }}>
+                          {section.title}
+                        </p>
+                        <Textarea
+                          value={getQuestionAnswer(question.sectionId)}
+                          onChange={(event) => setQuestionAnswer(question.sectionId, event.target.value)}
+                          placeholder="Digite sua resposta aqui..."
+                          className="mt-4 min-h-24 bg-white"
+                        />
+                      </div>
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
           </div>
 
           <div className="flex gap-3">
