@@ -154,6 +154,7 @@ const methodologyGuides: MethodologyGuide[] = [
 const guideIcons = [Sparkles, BatteryCharging, Layers3, Brain];
 const evaluationNote =
   'A nossa roda da vida e uma fotografia mensal da sua energia nas areas importantes da sua vida e voce preenche uma vez por mes. Transforme isso em objetivos possiveis e revisite depois para acompanhar a sua evolucao. Ela nao existe para te provar que esta falhando, mas para te mostrar onde faz sentido colocar atencao e cuidado primeiro. Avalie cada campo numa escala de 0 a 10.';
+const insignificantWords = new Set(['de', 'da', 'do', 'das', 'dos', 'e']);
 
 export function WheelOfLife() {
   const [values, setValues] = useState<{ [key: string]: number }>({});
@@ -178,6 +179,7 @@ export function WheelOfLife() {
   const maxRadius = 310;
   const outerRingWidth = 40;
   const levels = 10;
+  const topicLabelRadius = maxRadius - 28;
 
   const polarToCartesian = (angle: number, radius: number) => {
     const rad = (angle - 90) * Math.PI / 180;
@@ -204,6 +206,21 @@ export function WheelOfLife() {
   };
 
   const getTextPathId = (index: number) => `textPath-${index}`;
+  const getTopicTextPathId = (sectionIndex: number, topicIndex: number) => `topicTextPath-${sectionIndex}-${topicIndex}`;
+
+  const getTopicInitials = (topicName: string) => {
+    const sanitizedWords = topicName
+      .replace(/[()]/g, ' ')
+      .split(/\s+/)
+      .map((word) => word.trim())
+      .filter((word) => word.length > 0)
+      .filter((word) => !insignificantWords.has(word.toLowerCase()));
+
+    return sanitizedWords
+      .map((word) => word[0]?.toUpperCase() ?? '')
+      .join('')
+      .slice(0, 3);
+  };
 
   const getValue = (sectionIndex: number, topicIndex: number): number => {
     const key = `${sectionIndex}-${topicIndex}`;
@@ -371,6 +388,27 @@ export function WheelOfLife() {
                     />
                   );
                 })}
+
+                {sections.map((section, sectionIndex) => {
+                  const sectionAngleStart = sectionIndex * 90;
+                  const anglePerTopic = 90 / section.topics.length;
+
+                  return section.topics.map((topic, topicIndex) => {
+                    const startAngle = sectionAngleStart + topicIndex * anglePerTopic + 1.2;
+                    const endAngle = sectionAngleStart + (topicIndex + 1) * anglePerTopic - 1.2;
+                    const start = polarToCartesian(startAngle, topicLabelRadius);
+                    const end = polarToCartesian(endAngle, topicLabelRadius);
+
+                    return (
+                      <path
+                        key={getTopicTextPathId(sectionIndex, topicIndex)}
+                        id={getTopicTextPathId(sectionIndex, topicIndex)}
+                        d={`M ${start.x} ${start.y} A ${topicLabelRadius} ${topicLabelRadius} 0 0 1 ${end.x} ${end.y}`}
+                        fill="none"
+                      />
+                    );
+                  });
+                })}
               </defs>
 
               {Array.from({ length: levels + 1 }, (_, i) => {
@@ -435,6 +473,25 @@ export function WheelOfLife() {
                     {section.title}
                   </textPath>
                 </text>
+              ))}
+
+              {sections.map((section, sectionIndex) => (
+                section.topics.map((topic, topicIndex) => (
+                  <text
+                    key={`topic-text-${sectionIndex}-${topicIndex}`}
+                    fill="#0f172a"
+                    className="text-[10px]"
+                    style={{ fontWeight: 700, letterSpacing: '0.08em' }}
+                  >
+                    <textPath
+                      href={`#${getTopicTextPathId(sectionIndex, topicIndex)}`}
+                      startOffset="50%"
+                      textAnchor="middle"
+                    >
+                      {getTopicInitials(topic.name)}
+                    </textPath>
+                  </text>
+                ))
               ))}
 
               {sections.map((section, sectionIndex) => {
