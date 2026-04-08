@@ -151,6 +151,8 @@ const methodologyGuides: MethodologyGuide[] = [
 ];
 
 const guideIcons = [Sparkles, BatteryCharging, Layers3, Brain];
+const evaluationNote =
+  'A nossa roda da vida e uma fotografia mensal da sua energia nas areas importantes da sua vida e voce preenche uma vez por mes. Transforme isso em objetivos possiveis e revisite depois para acompanhar a sua evolucao. Ela nao existe para te provar que esta falhando, mas para te mostrar onde faz sentido colocar atencao e cuidado primeiro. Avalie cada campo numa escala de 0 a 10.';
 
 export function WheelOfLife() {
   const [values, setValues] = useState<{ [key: string]: number }>({});
@@ -339,6 +341,16 @@ export function WheelOfLife() {
 
       <TabsContent value="avaliacao">
         <div className="flex flex-col items-center gap-8">
+          <div className="w-full max-w-6xl rounded-xl border-t-4 bg-white p-6 shadow-lg" style={{ borderColor: '#DC2626' }}>
+            <div className="mb-3 flex items-center gap-2">
+              <span className="rounded-full bg-red-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-red-600">
+                Nota
+              </span>
+              <span className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">Preenchimento mensal</span>
+            </div>
+            <p className="max-w-5xl text-sm leading-7 text-slate-700">{evaluationNote}</p>
+          </div>
+
           <div id="wheel-of-life" className="overflow-x-auto rounded-2xl bg-white p-6 shadow-2xl md:p-12">
             <svg width={size} height={size}>
               <defs>
