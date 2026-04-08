@@ -298,6 +298,9 @@ export function WheelOfLife() {
     ].join(' ');
   };
 
+  const getSectionStartAngle = (sectionIndex: number) => ((sectionIndex + 3) % 4) * 90;
+  const getSectionEndAngle = (sectionIndex: number) => getSectionStartAngle(sectionIndex) + 90;
+
   const getTextPathId = (index: number) => `textPath-${index}`;
   const getTopicTextPathId = (sectionIndex: number, topicIndex: number) => `topicTextPath-${sectionIndex}-${topicIndex}`;
 
@@ -628,8 +631,8 @@ export function WheelOfLife() {
             <svg width={size} height={size}>
               <defs>
                 {wheelSections.map((section, index) => {
-                  const startAngle = index * 90;
-                  const endAngle = (index + 1) * 90;
+                  const startAngle = getSectionStartAngle(index);
+                  const endAngle = getSectionEndAngle(index);
                   const midRadius = topicBandOuterRadius + outerRingWidth / 2;
                   const start = polarToCartesian(startAngle, midRadius);
                   const end = polarToCartesian(endAngle, midRadius);
@@ -645,7 +648,7 @@ export function WheelOfLife() {
                 })}
 
                 {wheelSections.map((section, sectionIndex) => {
-                  const sectionAngleStart = sectionIndex * 90;
+                  const sectionAngleStart = getSectionStartAngle(sectionIndex);
                   const anglePerTopic = 90 / section.topics.length;
 
                   return section.topics.map((topic, topicIndex) => {
@@ -682,7 +685,7 @@ export function WheelOfLife() {
               })}
 
               {wheelSections.map((section, sectionIndex) => {
-                const sectionAngleStart = sectionIndex * 90;
+                const sectionAngleStart = getSectionStartAngle(sectionIndex);
                 const anglePerTopic = 90 / section.topics.length;
 
                 return section.topics.map((topic, topicIndex) => {
@@ -705,8 +708,8 @@ export function WheelOfLife() {
               })}
 
               {wheelSections.map((section, index) => {
-                const startAngle = index * 90;
-                const endAngle = (index + 1) * 90;
+                const startAngle = getSectionStartAngle(index);
+                const endAngle = getSectionEndAngle(index);
 
                 return (
                   <path
@@ -718,7 +721,7 @@ export function WheelOfLife() {
               })}
 
               {wheelSections.map((section, sectionIndex) => {
-                const sectionAngleStart = sectionIndex * 90;
+                const sectionAngleStart = getSectionStartAngle(sectionIndex);
                 const anglePerTopic = 90 / section.topics.length;
                 const topicBandFill = lightenColor(section.color, 0.72);
 
@@ -772,7 +775,7 @@ export function WheelOfLife() {
               )}
 
               {wheelSections.map((section, sectionIndex) => {
-                const sectionAngleStart = sectionIndex * 90;
+                const sectionAngleStart = getSectionStartAngle(sectionIndex);
                 const anglePerTopic = 90 / section.topics.length;
 
                 return section.topics.map((topic, topicIndex) => {
@@ -811,7 +814,7 @@ export function WheelOfLife() {
               })}
 
               {wheelSections.map((section, sectionIndex) => {
-                const sectionAngleStart = sectionIndex * 90;
+                const sectionAngleStart = getSectionStartAngle(sectionIndex);
                 const anglePerTopic = 90 / section.topics.length;
                 const levelSize = (scoreMaxRadius - innerRadius) / levels;
 
