@@ -355,10 +355,14 @@ export function WheelOfLife() {
     setValues((prev) => ({ ...prev, [key]: value }));
   };
 
-  const getQuestionAnswer = (sectionId: string) => questionAnswers[sectionId] || '';
+  const getQuestionAnswerKey = (sectionId: string, questionNumber: number) => `${sectionId}-${questionNumber}`;
 
-  const setQuestionAnswer = (sectionId: string, answer: string) => {
-    setQuestionAnswers((prev) => ({ ...prev, [sectionId]: answer }));
+  const getQuestionAnswer = (sectionId: string, questionNumber: number) =>
+    questionAnswers[getQuestionAnswerKey(sectionId, questionNumber)] || '';
+
+  const setQuestionAnswer = (sectionId: string, questionNumber: number, answer: string) => {
+    const key = getQuestionAnswerKey(sectionId, questionNumber);
+    setQuestionAnswers((prev) => ({ ...prev, [key]: answer }));
   };
 
   const toggleTrackSelection = (track: string) => {
@@ -492,31 +496,47 @@ export function WheelOfLife() {
         pdf.text('Questoes orientadoras', leftMargin, currentY);
         currentY += 6;
 
-        guidingQuestions.forEach((question) => {
-          const section = sectionById[question.sectionId];
-          const accent = section ? hexToRgb(section.color) : { r: 51, g: 65, b: 85 };
-          const answer = getQuestionAnswer(question.sectionId) || 'Resposta nao preenchida.';
-          const promptLines = pdf.splitTextToSize(`${question.questionNumber}. ${question.prompt}`, contentWidth - 6);
-          const answerLines = pdf.splitTextToSize(`Resposta: ${answer}`, contentWidth - 10);
-          const blockHeight = 10 + promptLines.length * 4 + answerLines.length * 4;
+        sections.forEach((section) => {
+          const accent = hexToRgb(section.color);
+          const sectionQuestionBlocks = guidingQuestions.map((question) => {
+            const promptLines = pdf.splitTextToSize(`${question.questionNumber}. ${question.prompt}`, contentWidth - 6);
+            const answer = getQuestionAnswer(section.id, question.questionNumber) || 'Resposta nao preenchida.';
+            const answerLines = pdf.splitTextToSize(`Resposta: ${answer}`, contentWidth - 10);
+            const blockHeight = 10 + promptLines.length * 4 + answerLines.length * 4;
 
-          ensureSpace(blockHeight);
+            return { question, promptLines, answerLines, blockHeight };
+          });
 
-          pdf.setDrawColor(accent.r, accent.g, accent.b);
-          pdf.setFillColor(248, 250, 252);
-          pdf.roundedRect(leftMargin, currentY, contentWidth, blockHeight, 2, 2, 'FD');
+          const estimatedHeight =
+            10 + sectionQuestionBlocks.reduce((total, block) => total + block.blockHeight + 4, 0);
+
+          ensureSpace(estimatedHeight);
 
           pdf.setFont('helvetica', 'bold');
           pdf.setFontSize(9);
           pdf.setTextColor(accent.r, accent.g, accent.b);
-          pdf.text(promptLines, leftMargin + 3, currentY + 5);
+          pdf.text(section.title, leftMargin, currentY);
+          currentY += 5;
 
-          pdf.setFont('helvetica', 'normal');
-          pdf.setFontSize(8);
-          pdf.setTextColor(51, 65, 85);
-          pdf.text(answerLines, leftMargin + 5, currentY + 5 + promptLines.length * 4 + 2);
+          sectionQuestionBlocks.forEach(({ question, promptLines, answerLines, blockHeight }) => {
+            ensureSpace(blockHeight);
 
-          currentY += blockHeight + 4;
+            pdf.setDrawColor(accent.r, accent.g, accent.b);
+            pdf.setFillColor(248, 250, 252);
+            pdf.roundedRect(leftMargin, currentY, contentWidth, blockHeight, 2, 2, 'FD');
+
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(9);
+            pdf.setTextColor(accent.r, accent.g, accent.b);
+            pdf.text(promptLines, leftMargin + 3, currentY + 5);
+
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(8);
+            pdf.setTextColor(51, 65, 85);
+            pdf.text(answerLines, leftMargin + 5, currentY + 5 + promptLines.length * 4 + 2);
+
+            currentY += blockHeight + 4;
+          });
         });
 
         pdf.save('roda-da-vida.pdf');
@@ -957,7 +977,6 @@ export function WheelOfLife() {
               {methodologyGuides.map((guide) => {
                 const section = sections.find((item) => item.title === guide.title);
                 const accentColor = section?.color ?? '#334155';
-                const question = section ? guidingQuestions.find((item) => item.sectionId === section.id) : undefined;
                 const Icon = guideIcons[sections.findIndex((item) => item.title === guide.title)] ?? BookOpen;
                 const isOpen = selectedGuideTitle === guide.title;
 
@@ -981,35 +1000,38 @@ export function WheelOfLife() {
                           </div>
                         </div>
 
-                        {question ? (
-                          <div
-                            className="mb-4 rounded-xl border p-4 shadow-sm"
-                            style={{
-                              borderColor: lightenColor(accentColor, 0.6),
-                              backgroundColor: lightenColor(accentColor, 0.92),
-                            }}
-                          >
-                            <div className="flex items-start gap-3">
-                              <span
-                                className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                                style={{ backgroundColor: accentColor }}
-                              >
-                                {question.questionNumber}
-                              </span>
-                              <div className="min-w-0 flex-1">
-                                <p className="text-sm font-semibold leading-6 text-slate-900">{question.prompt}</p>
-                                <Textarea
-                                  value={getQuestionAnswer(question.sectionId)}
-                                  onChange={(event) => setQuestionAnswer(question.sectionId, event.target.value)}
-                                  placeholder="Digite sua resposta aqui..."
-                                  className="mt-3 min-h-24 bg-white"
-                                />
+                        <div className="mb-4 space-y-3">
+                          {guidingQuestions.map((question) => (
+                            <div
+                              key={`${guide.title}-${question.questionNumber}`}
+                              className="rounded-xl border p-4 shadow-sm"
+                              style={{
+                                borderColor: lightenColor(accentColor, 0.6),
+                                backgroundColor: lightenColor(accentColor, 0.92),
+                              }}
+                            >
+                              <div className="flex items-start gap-3">
+                                <span
+                                  className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                                  style={{ backgroundColor: accentColor }}
+                                >
+                                  {question.questionNumber}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-semibold leading-6 text-slate-900">{question.prompt}</p>
+                                  <Textarea
+                                    value={section ? getQuestionAnswer(section.id, question.questionNumber) : ''}
+                                    onChange={(event) =>
+                                      section && setQuestionAnswer(section.id, question.questionNumber, event.target.value)
+                                    }
+                                    placeholder="Digite sua resposta aqui..."
+                                    className="mt-3 min-h-24 bg-white"
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ) : (
-                          <p className="mb-4 text-sm leading-6 text-slate-600">{guide.shortDescription}</p>
-                        )}
+                          ))}
+                        </div>
 
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-slate-500">{section?.topics.length ?? 0} topicos</span>
