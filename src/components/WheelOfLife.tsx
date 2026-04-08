@@ -913,55 +913,6 @@ export function WheelOfLife() {
             ))}
           </div>
 
-          <div className="w-full max-w-6xl rounded-[1.9rem] border border-slate-200/80 bg-white p-5 shadow-[0_24px_80px_rgba(15,23,42,0.08)] md:p-7">
-            <div className="mb-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Questoes orientadoras</p>
-              <h3 className="mt-2 text-xl font-semibold text-slate-900">Registre uma resposta para cada quadrante.</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Essas respostas tambem sao exportadas junto com a roda quando voce salva o PDF.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {guidingQuestions.map((question) => {
-                const section = sectionById[question.sectionId];
-                if (!section) return null;
-
-                return (
-                  <section
-                    key={question.sectionId}
-                    className="rounded-xl border p-4 shadow-sm"
-                    style={{
-                      borderColor: lightenColor(section.color, 0.6),
-                      backgroundColor: lightenColor(section.color, 0.92),
-                    }}
-                  >
-                    <div className="flex items-start gap-3">
-                      <span
-                        className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-                        style={{ backgroundColor: section.color }}
-                      >
-                        {question.questionNumber}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-base font-semibold leading-7 text-slate-900">{question.prompt}</p>
-                        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em]" style={{ color: section.color }}>
-                          {section.title}
-                        </p>
-                        <Textarea
-                          value={getQuestionAnswer(question.sectionId)}
-                          onChange={(event) => setQuestionAnswer(question.sectionId, event.target.value)}
-                          placeholder="Digite sua resposta aqui..."
-                          className="mt-4 min-h-24 bg-white"
-                        />
-                      </div>
-                    </div>
-                  </section>
-                );
-              })}
-            </div>
-          </div>
-
           <div className="flex gap-3">
             <button
               className="flex items-center gap-2 rounded-lg bg-slate-500 px-4 py-2 text-white transition-colors hover:bg-slate-600"
@@ -1006,6 +957,7 @@ export function WheelOfLife() {
               {methodologyGuides.map((guide) => {
                 const section = sections.find((item) => item.title === guide.title);
                 const accentColor = section?.color ?? '#334155';
+                const question = section ? guidingQuestions.find((item) => item.sectionId === section.id) : undefined;
                 const Icon = guideIcons[sections.findIndex((item) => item.title === guide.title)] ?? BookOpen;
                 const isOpen = selectedGuideTitle === guide.title;
 
@@ -1029,7 +981,35 @@ export function WheelOfLife() {
                           </div>
                         </div>
 
-                        <p className="mb-4 text-sm leading-6 text-slate-600">{guide.shortDescription}</p>
+                        {question ? (
+                          <div
+                            className="mb-4 rounded-xl border p-4 shadow-sm"
+                            style={{
+                              borderColor: lightenColor(accentColor, 0.6),
+                              backgroundColor: lightenColor(accentColor, 0.92),
+                            }}
+                          >
+                            <div className="flex items-start gap-3">
+                              <span
+                                className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                                style={{ backgroundColor: accentColor }}
+                              >
+                                {question.questionNumber}
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-semibold leading-6 text-slate-900">{question.prompt}</p>
+                                <Textarea
+                                  value={getQuestionAnswer(question.sectionId)}
+                                  onChange={(event) => setQuestionAnswer(question.sectionId, event.target.value)}
+                                  placeholder="Digite sua resposta aqui..."
+                                  className="mt-3 min-h-24 bg-white"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="mb-4 text-sm leading-6 text-slate-600">{guide.shortDescription}</p>
+                        )}
 
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-slate-500">{section?.topics.length ?? 0} topicos</span>
