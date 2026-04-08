@@ -304,7 +304,7 @@ export function WheelOfLife() {
   const getTextPathId = (index: number) => `textPath-${index}`;
   const getTopicTextPathId = (sectionIndex: number, topicIndex: number) => `topicTextPath-${sectionIndex}-${topicIndex}`;
 
-  const getTopicInitials = (topicName: string) => {
+  const getTopicLabel = (topicName: string) => {
     const sanitizedWords = topicName
       .replace(/[()]/g, ' ')
       .split(/\s+/)
@@ -312,10 +312,15 @@ export function WheelOfLife() {
       .filter((word) => word.length > 0)
       .filter((word) => !insignificantWords.has(word.toLowerCase()));
 
-    return sanitizedWords
-      .map((word) => word[0]?.toUpperCase() ?? '')
-      .join('')
-      .slice(0, 3);
+    if (sanitizedWords.length === 0) return '';
+
+    const abbreviateWord = (word: string) => word.slice(0, Math.min(word.length, 3)).toUpperCase();
+
+    if (sanitizedWords.length === 1) {
+      return abbreviateWord(sanitizedWords[0]);
+    }
+
+    return `${sanitizedWords[0][0]?.toUpperCase() ?? ''}. ${abbreviateWord(sanitizedWords[1])}`;
   };
 
   const formatDateLabel = (value: string) => {
@@ -768,7 +773,7 @@ export function WheelOfLife() {
                       startOffset="50%"
                       textAnchor="middle"
                     >
-                      {getTopicInitials(topic.name)}
+                      {getTopicLabel(topic.name)}
                     </textPath>
                   </text>
                 )),
