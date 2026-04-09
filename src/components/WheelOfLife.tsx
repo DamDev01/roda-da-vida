@@ -54,11 +54,11 @@ const sections: Section[] = [
     id: 'metodologia-5-corpos',
     title: 'METODOLOGIA DOS 5 CORPOS',
     topics: [
-      { name: 'Corpo Fisico' },
+      { name: 'Corpo Físico' },
       { name: 'Corpo Mental' },
       { name: 'Corpo Emocional' },
       { name: 'Corpo Espiritual' },
-      { name: 'Corpo Autentico' },
+      { name: 'Corpo Autêntico' },
     ],
     color: '#1E40AF',
     cardNumber: 1,
@@ -67,7 +67,7 @@ const sections: Section[] = [
     id: 'banco-de-energia',
     title: 'BANCO DE ENERGIA',
     topics: [
-      { name: 'Depositos' },
+      { name: 'Depósitos' },
       { name: 'Retiradas' },
     ],
     color: '#F59E0B',
@@ -75,33 +75,33 @@ const sections: Section[] = [
   },
   {
     id: 'estrategias-aplicadas',
-    title: 'ESTRATEGIAS APLICADAS',
+    title: 'ESTRATÉGIAS APLICADAS',
     topics: [
       { name: 'Comando Mental' },
       { name: 'Comando do Tempo' },
       { name: 'Fechamento de Ciclo' },
       { name: 'START' },
       { name: 'SKANER' },
-      { name: 'Presenca' },
+      { name: 'Presença' },
       { name: 'Armadura de Cristal' },
-      { name: 'Independencia Emocional' },
+      { name: 'Independência Emocional' },
       { name: 'Autenticidade - Ansiedade' },
-      { name: 'Estrategia da Ponte - Saber falar e ouvir' },
+      { name: 'Estratégia da Ponte - Saber falar e ouvir' },
     ],
     color: '#10B981',
     cardNumber: 3,
   },
   {
     id: 'tracos-neurodivergentes',
-    title: 'TRACOS NEURODIVERGENTES',
+    title: 'TRAÇOS NEURODIVERGENTES',
     topics: [
       { name: 'Masking (Mascaramento)' },
-      { name: 'Inercia Autista' },
+      { name: 'Inércia Autista' },
       { name: 'Hiperfoco' },
-      { name: 'Ruminacao' },
+      { name: 'Ruminação' },
       { name: 'Alexitimia' },
       { name: 'Hiperempatia' },
-      { name: 'Ima de Energia' },
+      { name: 'Ímã de Energia' },
       { name: 'Transtornos Sensoriais' },
     ],
     color: '#DC2626',
@@ -119,113 +119,113 @@ const wheelSectionOrder = [
 const methodologyGuides: MethodologyGuide[] = [
   {
     title: 'METODOLOGIA DOS 5 CORPOS',
-    shortDescription: 'Entenda o nivel de energia disponivel em cada corpo avaliado.',
+    shortDescription: 'Entenda o nível de energia disponível em cada corpo avaliado.',
     modalIntro:
-      'Esta leitura mostra como sua energia esta distribuida entre diferentes dimensoes da sua vida. O objetivo nao e responder bonito, e sim enxergar com clareza onde existe recurso, desgaste ou necessidade de cuidado.',
-    whatToEvaluate: 'Qual o meu nivel de energia para cada um dos corpos?',
+      'Esta leitura mostra como sua energia está distribuída entre diferentes dimensões da sua vida. O objetivo não é responder bonito, e sim enxergar com clareza onde existe recurso, desgaste ou necessidade de cuidado.',
+    whatToEvaluate: 'Qual é o meu nível de energia para cada um dos corpos?',
     usageExplanation: [
-      'Observe como voce esta no momento atual antes de marcar cada item.',
+      'Observe como você está no momento atual antes de marcar cada item.',
       'Considere o estado real de cada corpo, sem responder pelo que gostaria de sentir.',
-      'Use a escala para representar com honestidade o nivel de energia percebido.',
+      'Use a escala para representar com honestidade o nível de energia percebido.',
     ],
-    evaluationPrompt: 'Pergunta de avaliacao para cada item: qual o meu nivel de energia neste corpo agora?',
+    evaluationPrompt: 'Pergunta de avaliação para cada item: qual é o meu nível de energia neste corpo agora?',
     interpretationText:
-      'Notas baixas indicam corpos que pedem mais recuperacao, organizacao ou suporte. Notas mais altas mostram onde existe mais estabilidade e disponibilidade no momento.',
+      'Notas baixas indicam corpos que pedem mais recuperação, organização ou suporte. Notas mais altas mostram onde existe mais estabilidade e disponibilidade no momento.',
     practicalExample:
-      'Exemplo: se o corpo mental estiver alto e o emocional estiver baixo, voce pode estar conseguindo executar tarefas, mas com desgaste interno acumulado.',
+      'Exemplo: se o corpo mental estiver alto e o emocional estiver baixo, você pode estar conseguindo executar tarefas, mas com desgaste interno acumulado.',
   },
   {
     title: 'BANCO DE ENERGIA',
-    shortDescription: 'Registre como sua energia circulou no periodo avaliado.',
+    shortDescription: 'Registre como sua energia circulou no período avaliado.',
     modalIntro:
-      'O Banco de Energia funciona como uma fotografia do periodo escolhido. Ele ajuda a separar o que abastece sua vida do que consome sua energia de forma recorrente.',
-    whatToEvaluate: 'Qual o periodo que esta avaliando?',
+      'O Banco de Energia funciona como uma fotografia do período escolhido. Ele ajuda a separar o que abastece sua vida do que consome sua energia de forma recorrente.',
+    whatToEvaluate: 'Qual é o período que está avaliando?',
     usageExplanation: [
-      'Defina primeiro o periodo de referencia antes de preencher depositos e retiradas.',
+      'Defina primeiro o período de referência antes de preencher depósitos e retiradas.',
       'Registre o que aumentou sua energia e o que consumiu sua energia nesse intervalo.',
-      'Use este bloco como fotografia do periodo, nao como media geral da vida.',
+      'Use este bloco como fotografia do período, não como média geral da vida.',
     ],
-    evaluationPrompt: 'Pergunta de avaliacao: neste periodo, o que abasteceu e o que drenou minha energia?',
+    evaluationPrompt: 'Pergunta de avaliação: neste período, o que abasteceu e o que drenou minha energia?',
     interpretationText:
-      'Quando as retiradas pesam mais que os depositos, isso revela sobrecarga, desgaste ou um ritmo pouco sustentavel. O valor do exercicio esta em enxergar esse padrao com objetividade.',
+      'Quando as retiradas pesam mais que os depósitos, isso revela sobrecarga, desgaste ou um ritmo pouco sustentável. O valor do exercício está em enxergar esse padrão com objetividade.',
     practicalExample:
-      'Exemplo: excesso de demandas, barulho e interacoes longas podem entrar como retiradas; descanso, previsibilidade e pausas reais podem aparecer como depositos.',
+      'Exemplo: excesso de demandas, barulho e interações longas podem entrar como retiradas; descanso, previsibilidade e pausas reais podem aparecer como depósitos.',
     reminders: [
-      'Dúvidas sobre como fazer seu BE? Veja tutorial (link).',
-      'A explicacao completa do Banco de Energia tambem sera apresentada na etapa de tutorial na HM que acompanha o material escrito.',
+      'Dúvidas sobre como fazer seu BE? Veja o tutorial (link).',
+      'A explicação completa do Banco de Energia também será apresentada na etapa de tutorial na HM que acompanha o material escrito.',
     ],
   },
   {
-    title: 'ESTRATEGIAS APLICADAS',
-    shortDescription: 'Avalie o quanto as estrategias estao sendo usadas no seu gerenciamento de vida.',
+    title: 'ESTRATÉGIAS APLICADAS',
+    shortDescription: 'Avalie o quanto as estratégias estão sendo usadas no seu gerenciamento de vida.',
     modalIntro:
-      'Aqui o foco e presenca pratica, nao intencao. A proposta e medir o quanto as estrategias realmente aparecem no seu cotidiano e ajudam no gerenciamento da vida.',
-    whatToEvaluate: 'Em uma escala de 1 a 10, avalie o quanto esta fazendo uso das estrategias para elevar suas habilidades de gerenciamento da vida.',
+      'Aqui o foco é presença prática, não intenção. A proposta é medir o quanto as estratégias realmente aparecem no seu cotidiano e ajudam no gerenciamento da vida.',
+    whatToEvaluate: 'Em uma escala de 1 a 10, avalie o quanto está fazendo uso das estratégias para elevar suas habilidades de gerenciamento da vida.',
     usageExplanation: [
-      'Use a escala de 1 a 10 para indicar intensidade de uso das estrategias que voce conhece e aplica.',
-      'Para estrategias que ainda nao conhece ou nao utiliza, mantenha nota 0.',
-      'Aqui, o zero representa estrategia ausente na avaliacao, nao uma estrategia com desempenho ruim.',
-      'Se a estrategia nao fizer sentido para seus tracos e desafios, mantenha zero.',
+      'Use a escala de 1 a 10 para indicar a intensidade de uso das estratégias que você conhece e aplica.',
+      'Para estratégias que ainda não conhece ou não utiliza, mantenha nota 0.',
+      'Aqui, o zero representa estratégia ausente na avaliação, não uma estratégia com desempenho ruim.',
+      'Se a estratégia não fizer sentido para seus traços e desafios, mantenha zero.',
     ],
-    evaluationPrompt: 'Pergunta de avaliacao: quanto essa estrategia esta presente no meu dia a dia de forma util e aplicavel?',
+    evaluationPrompt: 'Pergunta de avaliação: quanto essa estratégia está presente no meu dia a dia de forma útil e aplicável?',
     interpretationText:
-      'Pontuacoes altas mostram estrategias ja incorporadas. Pontuacoes baixas nao significam fracasso; elas mostram onde ainda existe espaco para treino, adaptacao ou priorizacao.',
+      'Pontuações altas mostram estratégias já incorporadas. Pontuações baixas não significam fracasso; elas mostram onde ainda existe espaço para treino, adaptação ou priorização.',
     practicalExample:
-      'Exemplo: voce pode conhecer uma estrategia como START, mas se quase nunca a utiliza na pratica, a nota precisa refletir essa ausencia para o mapa ficar honesto.',
+      'Exemplo: você pode conhecer uma estratégia como START, mas, se quase nunca a utiliza na prática, a nota precisa refletir essa ausência para o mapa ficar honesto.',
   },
   {
-    title: 'TRACOS NEURODIVERGENTES',
-    shortDescription: 'Mapeie a intensidade com que cada traco aparece no seu perfil autista.',
+    title: 'TRAÇOS NEURODIVERGENTES',
+    shortDescription: 'Mapeie a intensidade com que cada traço aparece no seu perfil autista.',
     modalIntro:
-      'Nesta leitura, o importante e reconhecer intensidade e impacto, e nao rotular o traco como bom ou ruim. O mapa ajuda a compreender o funcionamento com mais precisao.',
-    whatToEvaluate: 'Analise, em escala de 1 a 10, o quanto esses tracos estao presentes no seu perfil autista.',
+      'Nesta leitura, o importante é reconhecer intensidade e impacto, e não rotular o traço como bom ou ruim. O mapa ajuda a compreender o funcionamento com mais precisão.',
+    whatToEvaluate: 'Analise, em escala de 1 a 10, o quanto esses traços estão presentes no seu perfil autista.',
     usageExplanation: [
-      'Quanto mais intenso o traco, maior deve ser o numero selecionado.',
-      'Se voce nao tiver determinado traco no seu sistema, mantenha nota 0.',
-      'O zero indica ausencia do traco, e nao intensidade minima.',
+      'Quanto mais intenso o traço, maior deve ser o número selecionado.',
+      'Se você não tiver determinado traço no seu sistema, mantenha nota 0.',
+      'O zero indica ausência do traço, e não intensidade mínima.',
     ],
-    evaluationPrompt: 'Pergunta de avaliacao: com que intensidade esse traco aparece no meu funcionamento?',
+    evaluationPrompt: 'Pergunta de avaliação: com que intensidade esse traço aparece no meu funcionamento?',
     interpretationText:
-      'Tracos mais intensos costumam exigir mais estrategia, mais ajuste ambiental e mais previsibilidade. O objetivo aqui e orientar cuidado, e nao fazer julgamento.',
+      'Traços mais intensos costumam exigir mais estratégia, mais ajuste ambiental e mais previsibilidade. O objetivo aqui é orientar cuidado, e não fazer julgamento.',
     practicalExample:
-      'Exemplo: um hiperfoco muito alto pode ser um recurso para determinadas tarefas, mas tambem pode dificultar pausas, transicoes e mudancas de contexto.',
+      'Exemplo: um hiperfoco muito alto pode ser um recurso para determinadas tarefas, mas também pode dificultar pausas, transições e mudanças de contexto.',
   },
 ];
 
 const guideIcons = [Sparkles, BatteryCharging, Layers3, Brain];
 const evaluationNote =
-  'A nossa roda da vida e uma fotografia mensal da sua energia nas areas importantes da sua vida e voce preenche uma vez por mes. Transforme isso em objetivos possiveis e revisite depois para acompanhar a sua evolucao. Ela nao existe para te provar que esta falhando, mas para te mostrar onde faz sentido colocar atencao e cuidado primeiro. Avalie cada campo numa escala de 0 a 10.';
+  'A nossa Roda da Vida é uma fotografia mensal da sua energia nas áreas importantes da sua vida, e você a preenche uma vez por mês. Transforme isso em objetivos possíveis e revisite depois para acompanhar a sua evolução. Ela não existe para provar que você está falhando, mas para mostrar onde faz sentido colocar atenção e cuidado primeiro. Avalie cada campo numa escala de 0 a 10.';
 const insignificantWords = new Set(['de', 'da', 'do', 'das', 'dos', 'e']);
 const trackOptions = [
   'Trilha da Energia',
   'Trilha do Sensorial',
   'Trilha do Trabalho',
-  'Trilha da Casa e Familia',
-  'Tilha do autocuidado',
-  'Trilha da Gestao Financeira',
-  'Trilha da Comunicacao',
-  'Trilha da Preservacao da Bioenergia.',
+  'Trilha da Casa e Família',
+  'Trilha do Autocuidado',
+  'Trilha da Gestão Financeira',
+  'Trilha da Comunicação',
+  'Trilha da Preservação da Bioenergia',
 ];
 const guidingQuestions: GuidingQuestion[] = [
   {
     sectionId: 'metodologia-5-corpos',
     questionNumber: 1,
-    prompt: 'Numa escala de 1 a 10, como voce sente a evolucao do bem estar em cada um dos 5 Corpos?',
+    prompt: 'Numa escala de 1 a 10, como você sente a evolução do bem-estar em cada um dos 5 corpos?',
   },
   {
     sectionId: 'banco-de-energia',
     questionNumber: 2,
-    prompt: 'Numa escala de 1 a 10, registre a sua evolucao em depositos e retiradas de energia neste mes.',
+    prompt: 'Numa escala de 1 a 10, registre a sua evolução em depósitos e retiradas de energia neste mês.',
   },
   {
     sectionId: 'estrategias-aplicadas',
     questionNumber: 3,
-    prompt: 'Numa escala de 1 a 10, o quanto voce conseguiu treinar em sua rotina, cada uma das estrategias de regulacao que ja foram apresentadas?',
+    prompt: 'Numa escala de 1 a 10, o quanto você conseguiu treinar, na sua rotina, cada uma das estratégias de regulação que já foram apresentadas?',
   },
   {
     sectionId: 'tracos-neurodivergentes',
     questionNumber: 4,
-    prompt: 'Numa escala de 1 a 10, o quanto os tracos neurodivergentes dificultam o seu dia a dia?',
+    prompt: 'Numa escala de 1 a 10, o quanto os traços neurodivergentes dificultam o seu dia a dia?',
   },
 ];
 
@@ -327,7 +327,7 @@ export function WheelOfLife() {
   };
 
   const formatDateLabel = (value: string) => {
-    if (!value) return 'Nao informada';
+    if (!value) return 'Não informada';
 
     const [year, month, day] = value.split('-');
     if (!year || !month || !day) return value;
@@ -496,14 +496,14 @@ export function WheelOfLife() {
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(11);
         pdf.setTextColor(15, 23, 42);
-        pdf.text('Questoes orientadoras', leftMargin, currentY);
+        pdf.text('Questões orientadoras', leftMargin, currentY);
         currentY += 6;
 
         sections.forEach((section) => {
           const accent = hexToRgb(section.color);
           const sectionQuestionBlocks = guidingQuestions.map((question) => {
             const promptLines = pdf.splitTextToSize(`${question.questionNumber}. ${question.prompt}`, contentWidth - 6);
-            const answer = getQuestionAnswer(section.id, question.questionNumber) || 'Resposta nao preenchida.';
+            const answer = getQuestionAnswer(section.id, question.questionNumber) || 'Resposta não preenchida.';
             const answerLines = pdf.splitTextToSize(`Resposta: ${answer}`, contentWidth - 10);
             const blockHeight = 10 + promptLines.length * 4 + answerLines.length * 4;
 
@@ -564,7 +564,7 @@ export function WheelOfLife() {
       <div className="mb-6 flex justify-center">
         <TabsList className="h-auto rounded-2xl bg-white/80 p-1 shadow-lg backdrop-blur">
           <TabsTrigger value="avaliacao" className="rounded-xl px-4 py-2">
-            Roda de Avaliacao
+            Roda de Avaliação
           </TabsTrigger>
           <TabsTrigger value="guia" className="rounded-xl px-4 py-2">
             Guia das Metodologias
@@ -579,11 +579,11 @@ export function WheelOfLife() {
               <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="mb-4 flex items-center gap-2 text-slate-700">
                   <CalendarDays size={16} />
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Data da avaliacao</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Data da avaliação</p>
                 </div>
                 <Input type="date" value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} />
                 <p className="mt-3 text-xs leading-5 text-slate-500">
-                  Use esse campo para registrar o mes ou o dia de referencia desta fotografia da roda.
+                  Use esse campo para registrar o mês ou o dia de referência desta fotografia da roda.
                 </p>
               </section>
 
@@ -591,14 +591,14 @@ export function WheelOfLife() {
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Trilhas selecionadas</p>
-                    <p className="mt-1 text-sm text-slate-600">Escolha uma ou mais trilhas para acompanhar junto com a avaliacao.</p>
+                    <p className="mt-1 text-sm text-slate-600">Escolha uma ou mais trilhas para acompanhar junto com a avaliação.</p>
                   </div>
                   <button
                     type="button"
                     className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100"
                     onClick={() => setIsTrackSelectorOpen((prev) => !prev)}
                   >
-                    Caixa de selecao
+                    Caixa de seleção
                     <ChevronDown size={16} className={`transition-transform ${isTrackSelectorOpen ? 'rotate-180' : ''}`} />
                   </button>
                 </div>
@@ -1037,7 +1037,7 @@ export function WheelOfLife() {
                         </div>
 
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-slate-500">{section?.topics.length ?? 0} topicos</span>
+                          <span className="text-sm font-medium text-slate-500">{section?.topics.length ?? 0} tópicos</span>
                           <span className="inline-flex items-center gap-2 text-sm font-semibold text-slate-800">
                             {isOpen ? 'Fechar' : 'Abrir'}
                             <ArrowRight
@@ -1073,7 +1073,7 @@ export function WheelOfLife() {
                             <p className="mt-2 text-sm leading-6 text-white/90">{guide.shortDescription}</p>
                             <div className="mt-4 flex flex-wrap gap-2">
                               <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold">
-                                {section?.topics.length ?? 0} topicos
+                                {section?.topics.length ?? 0} tópicos
                               </span>
                               <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold">
                                 Leitura guiada
@@ -1084,7 +1084,7 @@ export function WheelOfLife() {
 
                         <div className="space-y-4 bg-slate-50 p-4 md:p-5">
                           <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Introducao</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Introdução</p>
                             <p className="mt-3 text-sm leading-6 text-slate-700">{guide.modalIntro}</p>
                           </section>
 
@@ -1108,7 +1108,7 @@ export function WheelOfLife() {
                           </section>
 
                           <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Pergunta de avaliacao</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Pergunta de avaliação</p>
                             <p className="mt-3 text-sm leading-6 text-slate-700">{guide.evaluationPrompt}</p>
                           </section>
 
@@ -1118,12 +1118,12 @@ export function WheelOfLife() {
                           </section>
 
                           <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Exemplo pratico</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Exemplo prático</p>
                             <p className="mt-3 text-sm leading-6 text-slate-700">{guide.practicalExample}</p>
                           </section>
 
                           <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Topicos avaliados</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Tópicos avaliados</p>
                             <div className="mt-3 flex flex-wrap gap-2">
                               {section?.topics.map((topic) => (
                                 <span
