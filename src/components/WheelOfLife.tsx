@@ -16,11 +16,11 @@ import {
 import jsPDF from 'jspdf';
 
 import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 interface Topic {
   name: string;
+  wheelLabel?: string;
 }
 
 interface Section {
@@ -43,22 +43,16 @@ interface MethodologyGuide {
   reminders?: string[];
 }
 
-interface GuidingQuestion {
-  sectionId: string;
-  questionNumber: number;
-  prompt: string;
-}
-
 const sections: Section[] = [
   {
     id: 'metodologia-5-corpos',
     title: 'METODOLOGIA DOS 5 CORPOS',
     topics: [
-      { name: 'Corpo Físico' },
-      { name: 'Corpo Mental' },
-      { name: 'Corpo Emocional' },
-      { name: 'Corpo Espiritual' },
-      { name: 'Corpo Autêntico' },
+      { name: 'Corpo Físico (CF)', wheelLabel: 'CF' },
+      { name: 'Corpo Mental (CM)', wheelLabel: 'CM' },
+      { name: 'Corpo Emocional (CE)', wheelLabel: 'CE' },
+      { name: 'Corpo Espiritual (CESP)', wheelLabel: 'CESP' },
+      { name: 'Corpo Autêntico (CA)', wheelLabel: 'CA' },
     ],
     color: '#1E40AF',
     cardNumber: 1,
@@ -67,8 +61,8 @@ const sections: Section[] = [
     id: 'banco-de-energia',
     title: 'BANCO DE ENERGIA',
     topics: [
-      { name: 'Depósitos' },
-      { name: 'Retiradas' },
+      { name: 'Depósitos', wheelLabel: 'Depósitos' },
+      { name: 'Retiradas', wheelLabel: 'Retiradas' },
     ],
     color: '#F59E0B',
     cardNumber: 2,
@@ -77,16 +71,16 @@ const sections: Section[] = [
     id: 'estrategias-aplicadas',
     title: 'ESTRATÉGIAS APLICADAS',
     topics: [
-      { name: 'Comando Mental' },
-      { name: 'Comando do Tempo' },
-      { name: 'Fechamento de Ciclo' },
-      { name: 'START' },
-      { name: 'SKANER' },
-      { name: 'Presença' },
-      { name: 'Armadura de Cristal' },
-      { name: 'Independência Emocional' },
-      { name: 'Autenticidade - Ansiedade' },
-      { name: 'Estratégia da Ponte - Saber falar e ouvir' },
+      { name: 'Comando Mental (CM)', wheelLabel: 'CM' },
+      { name: 'Comando do Tempo (CT)', wheelLabel: 'CT' },
+      { name: 'Fechamento de Ciclo (FC)', wheelLabel: 'FC' },
+      { name: 'START (STA)', wheelLabel: 'STA' },
+      { name: 'SKANER (SKA)', wheelLabel: 'SKA' },
+      { name: 'Presença (PRE)', wheelLabel: 'PRE' },
+      { name: 'Armadura de Cristal (ACR)', wheelLabel: 'ACR' },
+      { name: 'Independência Emocional (INDE)', wheelLabel: 'INDE' },
+      { name: '+Autenticidade - Ansiedade (AUT)', wheelLabel: 'AUT' },
+      { name: 'Estratégia da Ponte - Saber falar e ouvir (PON)', wheelLabel: 'PON' },
     ],
     color: '#10B981',
     cardNumber: 3,
@@ -95,14 +89,14 @@ const sections: Section[] = [
     id: 'tracos-neurodivergentes',
     title: 'TRAÇOS NEURODIVERGENTES',
     topics: [
-      { name: 'Masking (Mascaramento)' },
-      { name: 'Inércia Autista' },
-      { name: 'Hiperfoco' },
-      { name: 'Ruminação' },
-      { name: 'Alexitimia' },
-      { name: 'Hiperempatia' },
-      { name: 'Ímã de Energia' },
-      { name: 'Transtornos Sensoriais' },
+      { name: 'Masking (Mascaramento) (MASK)', wheelLabel: 'MASK' },
+      { name: 'Inércia Autista (IAU)', wheelLabel: 'IAU' },
+      { name: 'Hiperfoco (HIPF)', wheelLabel: 'HIPF' },
+      { name: 'Ruminação (RUM)', wheelLabel: 'RUM' },
+      { name: 'Alexitimia (ALE)', wheelLabel: 'ALE' },
+      { name: 'Hiperempatia (HEPT)', wheelLabel: 'HEPT' },
+      { name: 'Ímã de Energia (IEN)', wheelLabel: 'IEN' },
+      { name: 'Transtornos Sensoriais (TSEN)', wheelLabel: 'TSEN' },
     ],
     color: '#DC2626',
     cardNumber: 4,
@@ -122,37 +116,38 @@ const methodologyGuides: MethodologyGuide[] = [
     shortDescription: 'Entenda o nível de energia disponível em cada corpo avaliado.',
     modalIntro:
       'Esta leitura mostra como sua energia está distribuída entre diferentes dimensões da sua vida. O objetivo não é responder bonito, e sim enxergar com clareza onde existe recurso, desgaste ou necessidade de cuidado.',
-    whatToEvaluate: 'Qual é o meu nível de energia para cada um dos corpos?',
+    whatToEvaluate: 'Qual é o meu nível de energia para cada um dos 5 corpos.',
     usageExplanation: [
       'Observe como você está no momento atual antes de marcar cada item.',
       'Considere o estado real de cada corpo, sem responder pelo que gostaria de sentir.',
       'Use a escala para representar com honestidade o nível de energia percebido.',
     ],
-    evaluationPrompt: 'Pergunta de avaliação para cada item: qual é o meu nível de energia neste corpo agora?',
+    evaluationPrompt:
+      'Pergunta de avaliação para cada um dos 5 corpos: Numa escala de 1 a 10, como estou sentindo o nível de energia e bem estar em cada um dos 5 Corpos?',
     interpretationText:
       'Notas baixas indicam corpos que pedem mais recuperação, organização ou suporte. Notas mais altas mostram onde existe mais estabilidade e disponibilidade no momento.',
     practicalExample:
-      'Exemplo: se o corpo mental estiver alto e o emocional estiver baixo, você pode estar conseguindo executar tarefas, mas com desgaste interno acumulado.',
+      'Exemplo: se o Corpo Mental estiver alto e o Corpo Emocional estiver baixo, você pode estar conseguindo executar tarefas, mas com desgaste interno acumulado.',
   },
   {
     title: 'BANCO DE ENERGIA',
-    shortDescription: 'Registre como sua energia circulou no período avaliado.',
+    shortDescription: 'Registre como a sua energia circulou no período avaliado.',
     modalIntro:
       'O Banco de Energia funciona como uma fotografia do período escolhido. Ele ajuda a separar o que abastece sua vida do que consome sua energia de forma recorrente.',
-    whatToEvaluate: 'Qual é o período que está avaliando?',
+    whatToEvaluate: 'O mês trabalhado com uma área da vida definida, a Trilha do mês.',
     usageExplanation: [
       'Defina primeiro o período de referência antes de preencher depósitos e retiradas.',
       'Registre o que aumentou sua energia e o que consumiu sua energia nesse intervalo.',
       'Use este bloco como fotografia do período, não como média geral da vida.',
     ],
-    evaluationPrompt: 'Pergunta de avaliação: neste período, o que abasteceu e o que drenou minha energia?',
+    evaluationPrompt:
+      'Pergunta de avaliação: Numa escala de 1 a 10, o quanto me dediquei em abastecer com depósitos de energia? O quanto ainda sinto minha e energia drenada?',
     interpretationText:
       'Quando as retiradas pesam mais que os depósitos, isso revela sobrecarga, desgaste ou um ritmo pouco sustentável. O valor do exercício está em enxergar esse padrão com objetividade.',
     practicalExample:
       'Exemplo: excesso de demandas, barulho e interações longas podem entrar como retiradas; descanso, previsibilidade e pausas reais podem aparecer como depósitos.',
     reminders: [
-      'Dúvidas sobre como fazer seu BE? Veja o tutorial (link).',
-      'A explicação completa do Banco de Energia também será apresentada na etapa de tutorial na HM que acompanha o material escrito.',
+      'Dúvidas sobre como fazer seu Banco de Energia Diário? Veja o tutorial (link).',
     ],
   },
   {
@@ -167,7 +162,7 @@ const methodologyGuides: MethodologyGuide[] = [
       'Aqui, o zero representa estratégia ausente na avaliação, não uma estratégia com desempenho ruim.',
       'Se a estratégia não fizer sentido para seus traços e desafios, mantenha zero.',
     ],
-    evaluationPrompt: 'Pergunta de avaliação: quanto essa estratégia está presente no meu dia a dia de forma útil e aplicável?',
+    evaluationPrompt: 'Pergunta de avaliação: o quanto essa estratégia está presente no meu dia a dia de forma útil e aplicável?',
     interpretationText:
       'Pontuações altas mostram estratégias já incorporadas. Pontuações baixas não significam fracasso; elas mostram onde ainda existe espaço para treino, adaptação ou priorização.',
     practicalExample:
@@ -186,7 +181,7 @@ const methodologyGuides: MethodologyGuide[] = [
     ],
     evaluationPrompt: 'Pergunta de avaliação: com que intensidade esse traço aparece no meu funcionamento?',
     interpretationText:
-      'Traços mais intensos costumam exigir mais estratégia, mais ajuste ambiental e mais previsibilidade. O objetivo aqui é orientar cuidado, e não fazer julgamento.',
+      'Traços mais intensos costumam exigir mais estratégia, mais ajuste ambiental e mais previsibilidade. O objetivo aqui é orientar o cuidado, e não fazer julgamento.',
     practicalExample:
       'Exemplo: um hiperfoco muito alto pode ser um recurso para determinadas tarefas, mas também pode dificultar pausas, transições e mudanças de contexto.',
   },
@@ -206,36 +201,12 @@ const trackOptions = [
   'Trilha da Comunicação',
   'Trilha da Preservação da Bioenergia',
 ];
-const guidingQuestions: GuidingQuestion[] = [
-  {
-    sectionId: 'metodologia-5-corpos',
-    questionNumber: 1,
-    prompt: 'Numa escala de 1 a 10, como você sente a evolução do bem-estar em cada um dos 5 corpos?',
-  },
-  {
-    sectionId: 'banco-de-energia',
-    questionNumber: 2,
-    prompt: 'Numa escala de 1 a 10, registre a sua evolução em depósitos e retiradas de energia neste mês.',
-  },
-  {
-    sectionId: 'estrategias-aplicadas',
-    questionNumber: 3,
-    prompt: 'Numa escala de 1 a 10, o quanto você conseguiu treinar, na sua rotina, cada uma das estratégias de regulação que já foram apresentadas?',
-  },
-  {
-    sectionId: 'tracos-neurodivergentes',
-    questionNumber: 4,
-    prompt: 'Numa escala de 1 a 10, o quanto os traços neurodivergentes dificultam o seu dia a dia?',
-  },
-];
-
 export function WheelOfLife() {
   const [values, setValues] = useState<{ [key: string]: number }>({});
   const [selectedGuideTitle, setSelectedGuideTitle] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
   const [isTrackSelectorOpen, setIsTrackSelectorOpen] = useState(false);
-  const [questionAnswers, setQuestionAnswers] = useState<{ [key: string]: string }>({});
 
   const wheelSections = wheelSectionOrder
     .map((sectionId) => sections.find((section) => section.id === sectionId))
@@ -307,7 +278,10 @@ export function WheelOfLife() {
   const getTextPathId = (index: number) => `textPath-${index}`;
   const getTopicTextPathId = (sectionIndex: number, topicIndex: number) => `topicTextPath-${sectionIndex}-${topicIndex}`;
 
-  const getTopicLabel = (topicName: string) => {
+  const getTopicLabel = (topic: Topic) => {
+    if (topic.wheelLabel) return topic.wheelLabel;
+
+    const topicName = topic.name;
     const sanitizedWords = topicName
       .replace(/[()]/g, ' ')
       .split(/\s+/)
@@ -356,16 +330,6 @@ export function WheelOfLife() {
   const setValue = (sectionId: string, topicIndex: number, value: number) => {
     const key = `${sectionId}-${topicIndex}`;
     setValues((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const getQuestionAnswerKey = (sectionId: string, questionNumber: number) => `${sectionId}-${questionNumber}`;
-
-  const getQuestionAnswer = (sectionId: string, questionNumber: number) =>
-    questionAnswers[getQuestionAnswerKey(sectionId, questionNumber)] || '';
-
-  const setQuestionAnswer = (sectionId: string, questionNumber: number, answer: string) => {
-    const key = getQuestionAnswerKey(sectionId, questionNumber);
-    setQuestionAnswers((prev) => ({ ...prev, [key]: answer }));
   };
 
   const toggleTrackSelection = (track: string) => {
@@ -492,56 +456,6 @@ export function WheelOfLife() {
           currentY += estimatedHeight + 3;
         });
 
-        ensureSpace(14);
-        pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(11);
-        pdf.setTextColor(15, 23, 42);
-        pdf.text('Questões orientadoras', leftMargin, currentY);
-        currentY += 6;
-
-        sections.forEach((section) => {
-          const accent = hexToRgb(section.color);
-          const sectionQuestionBlocks = guidingQuestions.map((question) => {
-            const promptLines = pdf.splitTextToSize(`${question.questionNumber}. ${question.prompt}`, contentWidth - 6);
-            const answer = getQuestionAnswer(section.id, question.questionNumber) || 'Resposta não preenchida.';
-            const answerLines = pdf.splitTextToSize(`Resposta: ${answer}`, contentWidth - 10);
-            const blockHeight = 10 + promptLines.length * 4 + answerLines.length * 4;
-
-            return { question, promptLines, answerLines, blockHeight };
-          });
-
-          const estimatedHeight =
-            10 + sectionQuestionBlocks.reduce((total, block) => total + block.blockHeight + 4, 0);
-
-          ensureSpace(estimatedHeight);
-
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(9);
-          pdf.setTextColor(accent.r, accent.g, accent.b);
-          pdf.text(section.title, leftMargin, currentY);
-          currentY += 5;
-
-          sectionQuestionBlocks.forEach(({ question, promptLines, answerLines, blockHeight }) => {
-            ensureSpace(blockHeight);
-
-            pdf.setDrawColor(accent.r, accent.g, accent.b);
-            pdf.setFillColor(248, 250, 252);
-            pdf.roundedRect(leftMargin, currentY, contentWidth, blockHeight, 2, 2, 'FD');
-
-            pdf.setFont('helvetica', 'bold');
-            pdf.setFontSize(9);
-            pdf.setTextColor(accent.r, accent.g, accent.b);
-            pdf.text(promptLines, leftMargin + 3, currentY + 5);
-
-            pdf.setFont('helvetica', 'normal');
-            pdf.setFontSize(8);
-            pdf.setTextColor(51, 65, 85);
-            pdf.text(answerLines, leftMargin + 5, currentY + 5 + promptLines.length * 4 + 2);
-
-            currentY += blockHeight + 4;
-          });
-        });
-
         pdf.save('roda-da-vida.pdf');
       }
 
@@ -555,7 +469,6 @@ export function WheelOfLife() {
     setValues({});
     setSelectedDate('');
     setSelectedTracks([]);
-    setQuestionAnswers({});
     setIsTrackSelectorOpen(false);
   };
 
@@ -796,7 +709,7 @@ export function WheelOfLife() {
                       startOffset="50%"
                       textAnchor="middle"
                     >
-                      {getTopicLabel(topic.name)}
+                      {getTopicLabel(topic)}
                     </textPath>
                   </text>
                 )),
@@ -1003,37 +916,11 @@ export function WheelOfLife() {
                           </div>
                         </div>
 
-                        <div className="mb-4 space-y-3">
-                          {guidingQuestions.map((question) => (
-                            <div
-                              key={`${guide.title}-${question.questionNumber}`}
-                              className="rounded-xl border p-4 shadow-sm"
-                              style={{
-                                borderColor: lightenColor(accentColor, 0.6),
-                                backgroundColor: lightenColor(accentColor, 0.92),
-                              }}
-                            >
-                              <div className="flex items-start gap-3">
-                                <span
-                                  className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                                  style={{ backgroundColor: accentColor }}
-                                >
-                                  {question.questionNumber}
-                                </span>
-                                <div className="min-w-0 flex-1">
-                                  <p className="text-sm font-semibold leading-6 text-slate-900">{question.prompt}</p>
-                                  <Textarea
-                                    value={section ? getQuestionAnswer(section.id, question.questionNumber) : ''}
-                                    onChange={(event) =>
-                                      section && setQuestionAnswer(section.id, question.questionNumber, event.target.value)
-                                    }
-                                    placeholder="Digite sua resposta aqui..."
-                                    className="mt-3 min-h-24 bg-white"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          ))}
+                        <div className="mb-4 rounded-lg border p-4" style={{
+                          borderColor: lightenColor(accentColor, 0.6),
+                          backgroundColor: lightenColor(accentColor, 0.92),
+                        }}>
+                          <p className="text-sm leading-6 text-slate-700">{guide.shortDescription}</p>
                         </div>
 
                         <div className="flex items-center justify-between">
